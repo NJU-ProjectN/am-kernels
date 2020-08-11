@@ -15,7 +15,7 @@ int main() {
       a[i] /= j;
 
   for(i = 0; i < N; i ++)
-    nemu_assert(a[i] == i);
+    check(a[i] == i);
 
   return 0;
 }

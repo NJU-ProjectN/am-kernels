@@ -9,7 +9,7 @@ int main() {
 		*((volatile unsigned*)(buf + 3)) = 0xaabbccdd;
 
 		x = *((volatile unsigned*)(buf + 3));
-		nemu_assert(x == 0xaabbccdd);
+		check(x == 0xaabbccdd);
 
 		buf[0] = buf[1] = 0;
 	}

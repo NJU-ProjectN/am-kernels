@@ -21,10 +21,10 @@ int main() {
 	}
 
 	for(j = 0; j < N; j ++) {
-		nemu_assert(a[j] == ans[j]);
+		check(a[j] == ans[j]);
 	}
 
-	nemu_assert(j == N);
+	check(j == N);
 
 	return 0;
 }

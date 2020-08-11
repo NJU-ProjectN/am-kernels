@@ -6,7 +6,7 @@
 #include <klib-macros.h>
 
 __attribute__((noinline))
-void nemu_assert(bool cond) {
+void check(bool cond) {
   if (!cond) halt(1);
 }
 

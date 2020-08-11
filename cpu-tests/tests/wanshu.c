@@ -13,12 +13,12 @@ int main() {
 		}
 
 		if(sum == n) {
-			nemu_assert(n == ans[k]);
+			check(n == ans[k]);
 			k ++;
 		}
 	}
 
-	nemu_assert(k == 2);
+	check(k == 2);
 
 	return 0;
 }

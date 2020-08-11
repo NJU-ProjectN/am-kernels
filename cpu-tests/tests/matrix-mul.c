@@ -48,13 +48,13 @@ int main() {
 			for(k = 0; k < N; k ++) {
 				c[i][j] += a[i][k] * b[k][j];
 			}
-			nemu_assert(c[i][j] == ans[i][j]);
-			nemu_assert(k == N);
+			check(c[i][j] == ans[i][j]);
+			check(k == N);
 		}
-		nemu_assert(j == N);
+		check(j == N);
 	}
 
-	nemu_assert(i == N);
+	check(i == N);
 
 	return 0;
 }

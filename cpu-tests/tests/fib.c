@@ -7,10 +7,10 @@ int main() {
 	int i;
 	for(i = 2; i < 40; i ++) {
 		fib[i] = fib[i - 1] + fib[i - 2];
-		nemu_assert(fib[i] == ans[i]);
+		check(fib[i] == ans[i]);
 	}
 
-	nemu_assert(i == 40);
+	check(i == 40);
 
 	return 0;
 }

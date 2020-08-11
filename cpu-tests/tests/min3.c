@@ -18,14 +18,14 @@ int main() {
 	for(i = 0; i < NR_DATA; i ++) {
 		for(j = 0; j < NR_DATA; j ++) {
 			for(k = 0; k < NR_DATA; k ++) {
-				nemu_assert(min3(test_data[i], test_data[j], test_data[k]) == ans[ans_idx ++]);
+				check(min3(test_data[i], test_data[j], test_data[k]) == ans[ans_idx ++]);
 			}
-			nemu_assert(k == NR_DATA);
+			check(k == NR_DATA);
 		}
-		nemu_assert(j == NR_DATA);
+		check(j == NR_DATA);
 	}
 
-	nemu_assert(i == NR_DATA);
+	check(i == NR_DATA);
 
 	return 0;
 }

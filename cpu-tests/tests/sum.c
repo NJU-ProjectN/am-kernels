@@ -8,7 +8,7 @@ int main() {
 		i ++;
 	}
 
-	nemu_assert(sum == 5050);
+	check(sum == 5050);
 
 	return 0;
 }

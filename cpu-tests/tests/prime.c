@@ -14,12 +14,12 @@ int main() {
 			}
 		}
 		if(prime) {
-			nemu_assert(i == ans[n]);
+			check(i == ans[n]);
 			n ++;
 		}
 	}
 
-	nemu_assert(n == 10);
+	check(n == 10);
 
 	return 0;
 }

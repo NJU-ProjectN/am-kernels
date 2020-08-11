@@ -22,18 +22,18 @@ int main() {
 
 	int i;
 	for(i = 0; i < N; i ++) {
-		nemu_assert(a[i] == i);
+		check(a[i] == i);
 	}
 
-	nemu_assert(i == N);
+	check(i == N);
 
 	bubble_sort();
 
 	for(i = 0; i < N; i ++) {
-		nemu_assert(a[i] == i);
+		check(a[i] == i);
 	}
 
-	nemu_assert(i == N);
+	check(i == N);
 
 	return 0;
 }

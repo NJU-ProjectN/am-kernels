@@ -27,7 +27,7 @@ int goldbach(int n) {
 int main() {
 	int n;
 	for(n = 4; n <= 30; n += 2) {
-		nemu_assert(goldbach(n) == 1);
+		check(goldbach(n) == 1);
 	}
 
 	return 0;
