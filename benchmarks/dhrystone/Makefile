@@ -1,3 +1,3 @@
-NAME = dhrystone-bench
+NAME = dhrystone
 SRCS = dry.c
 include $(AM_HOME)/Makefile
