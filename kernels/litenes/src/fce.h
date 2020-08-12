@@ -8,6 +8,9 @@
 #define SCR_H 240
 
 void fce_update_screen();
+int fce_load_rom(char *rom);
+void fce_init();
+void fce_run();
 void draw(int x, int y, int idx);
 
 static const uint32_t palette[64] = {
