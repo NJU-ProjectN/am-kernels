@@ -6,7 +6,7 @@
 #include <klib.h>
 
 static int frame_cnt;
-bool candraw() { return frame_cnt % 3 == 0; }
+static inline bool candraw() { return frame_cnt % (1 + FRAME_SKIP) == 0; }
 
 static uint32_t canvas[SCR_W * SCR_H];
 
@@ -112,9 +112,11 @@ void fce_run() {
     }
 
     nr_draw ++;
-    if (uptime_ms() - last > 1000) {
-      last = uptime_ms();
-      printf("FPS = %d\n", nr_draw);
+    int upt = uptime_ms();
+    if (upt - last > 1000) {
+      last = upt;
+      for (int i = 0; i < 80; i++) putch('\b');
+      printf("(System time: %ds) FPS = %d", upt / 1000, nr_draw);
       nr_draw = 0;
     }
   }
