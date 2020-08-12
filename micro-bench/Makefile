@@ -1,3 +1,3 @@
 NAME = micro-bench
-SRCS = $(shell find -L ./src/ -name "*.c" -o -name "*.cc")
+SRCS = $(shell find src/ -name "*.c" -o -name "*.cc")
 include $(AM_HOME)/Makefile
