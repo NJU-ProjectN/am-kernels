@@ -7,16 +7,19 @@
 #define CHAR_W          8
 #define CHAR_H         16
 #define NCHAR         128
-#define FG_COL   0xeeeeee
-#define BG_COL   0x2a0a29
+#define COL_WHITE    0xeeeeee
+#define COL_RED      0xff0033
+#define COL_GREEN    0x00cc33
+#define COL_PURPLE   0x2a0a29
 
+enum { WHITE = 0, RED, GREEN, PURPLE };
 struct character {
   char ch;
   int x, y, v, t;
 } chars[NCHAR];
 
 int screen_w, screen_h, hit, miss, wrong;
-uint32_t px[26][CHAR_W * CHAR_H], blank[CHAR_W * CHAR_H];
+uint32_t texture[3][26][CHAR_W * CHAR_H], blank[CHAR_W * CHAR_H];
 
 int min(int a, int b) {
   return (a < b) ? a : b;
@@ -77,7 +80,8 @@ void render() {
     struct character *c = &chars[i];
     if (c->ch) {
       x[n] = c->x; y[n] = c->y; n++;
-      io_write(AM_GPU_FBDRAW, c->x, c->y, px[c->ch - 'A'], CHAR_W, CHAR_H, false);
+      int col = (c->v > 0) ? WHITE : (c->v < 0 ? GREEN : RED);
+      io_write(AM_GPU_FBDRAW, c->x, c->y, texture[col][c->ch - 'A'], CHAR_W, CHAR_H, false);
     }
   }
   io_write(AM_GPU_FBDRAW, 0, 0, NULL, 0, 0, true);
@@ -108,7 +112,7 @@ void video_init() {
 
   extern char font[];
   for (int i = 0; i < CHAR_W * CHAR_H; i++)
-    blank[i] = BG_COL;
+    blank[i] = COL_PURPLE;
 
   for (int x = 0; x < screen_w; x += CHAR_W)
     for (int y = 0; y < screen_h; y += CHAR_H) {
@@ -118,8 +122,12 @@ void video_init() {
   for (int ch = 0; ch < 26; ch++) {
     char *c = &font[CHAR_H * ch];
     for (int i = 0, y = 0; y < CHAR_H; y++)
-      for (int x = 0; x < CHAR_W; x++, i++)
-        px[ch][i] = ((c[y] >> (CHAR_W - x - 1)) & 1) ? FG_COL : BG_COL;
+      for (int x = 0; x < CHAR_W; x++, i++) {
+        int t = (c[y] >> (CHAR_W - x - 1)) & 1;
+        texture[WHITE][ch][i] = t ? COL_WHITE : COL_PURPLE;
+        texture[GREEN][ch][i] = t ? COL_GREEN : COL_PURPLE;
+        texture[RED  ][ch][i] = t ? COL_RED   : COL_PURPLE;
+      }
   }
 }
 
