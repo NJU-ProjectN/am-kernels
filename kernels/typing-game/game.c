@@ -2,17 +2,25 @@
 #include <klib.h>
 #include <klib-macros.h>
 
-#define MAXCH       256
-#define FPS          60
-#define CHAR_PER_SEC 10
+#define FPS            30
+#define CPS             5
+#define CHAR_W          8
+#define CHAR_H         16
+#define NCHAR         128
+#define FG_COL   0xeeeeee
+#define BG_COL   0x2a0a29
 
 struct character {
   char ch;
-  int x, y, v;
-} chars[MAXCH];
+  int x, y, v, t;
+} chars[NCHAR];
 
-int screen_width, screen_height, char_width, char_height;
-int hit, miss, wrong;
+int screen_w, screen_h, hit, miss, wrong;
+uint32_t px[26][CHAR_W * CHAR_H], blank[CHAR_W * CHAR_H];
+
+int min(int a, int b) {
+  return (a < b) ? a : b;
+}
 
 int randint(int l, int r) {
   return l + (rand() & 0x7fffffff) % (r - l + 1);
@@ -21,33 +29,60 @@ int randint(int l, int r) {
 void new_char() {
   for (int i = 0; i < LENGTH(chars); i++) {
     struct character *c = &chars[i];
-    if (c->ch == '\0') {
+    if (!c->ch) {
       c->ch = 'A' + randint(0, 25);
-      c->x = randint(0, screen_width - char_width);
+      c->x = randint(0, screen_w - CHAR_W);
       c->y = 0;
-      c->v = (screen_height - char_height + 1) / randint(FPS * 3 / 2, FPS * 2);
+      c->v = (screen_h - CHAR_H + 1) / randint(FPS * 3 / 2, FPS * 2);
+      c->t = 0;
       return;
     }
   }
 }
 
-void progress(int frame) {
-  if (frame % (FPS / CHAR_PER_SEC) == 0) {
-    new_char();
-  }
+void game_logic_update(int frame) {
+  if (frame % (FPS / CPS) == 0) new_char();
   for (int i = 0; i < LENGTH(chars); i++) {
     struct character *c = &chars[i];
     if (c->ch) {
-      c->y += c->v;
-      if (c->y < 0) {
-        c->ch = '\0';
-      }
-      if (c->y + char_height >= screen_height) {
-        miss++;
-        c->ch = '\0';
+      if (c->t > 0) {
+        if (--c->t == 0) {
+          c->ch = '\0';
+        }
+      } else {
+        c->y += c->v;
+        if (c->y < 0) {
+          c->ch = '\0';
+        }
+        if (c->y + CHAR_H >= screen_h) {
+          miss++;
+          c->v = 0;
+          c->y = screen_h - CHAR_H;
+          c->t = FPS;
+        }
       }
     }
   }
+}
+
+void render() {
+  static int x[NCHAR], y[NCHAR], n = 0;
+
+  for (int i = 0; i < n; i++) {
+    io_write(AM_GPU_FBDRAW, x[i], y[i], blank, CHAR_W, CHAR_H, false);
+  }
+
+  n = 0;
+  for (int i = 0; i < LENGTH(chars); i++) {
+    struct character *c = &chars[i];
+    if (c->ch) {
+      x[n] = c->x; y[n] = c->y; n++;
+      io_write(AM_GPU_FBDRAW, c->x, c->y, px[c->ch - 'A'], CHAR_W, CHAR_H, false);
+    }
+  }
+  io_write(AM_GPU_FBDRAW, 0, 0, NULL, 0, 0, true);
+  for (int i = 0; i < 40; i++) putch('\b');
+  printf("Hit: %d; Miss: %d; Wrong: %d", hit, miss, wrong);
 }
 
 void check_hit(char ch) {
@@ -62,30 +97,30 @@ void check_hit(char ch) {
     wrong++;
   } else {
     hit++;
-    chars[m].v = -(screen_height - char_height + 1) / (FPS);
+    chars[m].v = -(screen_h - CHAR_H + 1) / (FPS);
   }
 }
 
-uint32_t px[32 * 16], blank[32 * 16];
 
-void render() {
-  static int x[MAXCH], y[MAXCH], n;
+void video_init() {
+  screen_w = io_read(AM_GPU_CONFIG).width;
+  screen_h = io_read(AM_GPU_CONFIG).height;
 
-  for (int i = 0; i < n; i++) {
-    io_write(AM_GPU_FBDRAW, x[i], y[i], blank, char_width, char_height, false);
-  }
+  extern char font[];
+  for (int i = 0; i < CHAR_W * CHAR_H; i++)
+    blank[i] = BG_COL;
 
-  n = 0;
-  for (int i = 0; i < LENGTH(chars); i++) {
-    struct character *c = &chars[i];
-    if (c->ch) {
-      x[n] = c->x; y[n] = c->y; n++;
-      io_write(AM_GPU_FBDRAW, c->x, c->y, px, char_width, char_height, false);
+  for (int x = 0; x < screen_w; x += CHAR_W)
+    for (int y = 0; y < screen_h; y += CHAR_H) {
+      io_write(AM_GPU_FBDRAW, x, y, blank, min(CHAR_W, screen_w - x), min(CHAR_H, screen_h - y), false);
     }
+
+  for (int ch = 0; ch < 26; ch++) {
+    char *c = &font[CHAR_H * ch];
+    for (int i = 0, y = 0; y < CHAR_H; y++)
+      for (int x = 0; x < CHAR_W; x++, i++)
+        px[ch][i] = ((c[y] >> (CHAR_W - x - 1)) & 1) ? FG_COL : BG_COL;
   }
-  io_write(AM_GPU_FBDRAW, 0, 0, NULL, 0, 0, true);
-  for (int i = 0; i < 80; i++) putch('\b');
-  printf("Hit: %d; Miss: %d; Wrong: %d", hit, miss, wrong);
 }
 
 char lut[256] = {
@@ -99,24 +134,18 @@ char lut[256] = {
 };
 
 int main() {
-  char_width  = 8;
-  char_height = 16;
-
-  for (int i = 0; i < char_width * char_height; i ++) px[i] = 0x345678;
-  for (int i = 0; i < char_width * char_height; i ++) blank[i] = 0;
-
   ioe_init();
+  video_init();
 
-  screen_width  = io_read(AM_GPU_CONFIG).width;
-  screen_height = io_read(AM_GPU_CONFIG).height;
+  panic_on(!io_read(AM_TIMER_CONFIG).present, "requires timer");
+  panic_on(!io_read(AM_INPUT_CONFIG).present, "requires keyboard");
 
   int current = 0, rendered = 0;
   while (1) {
     int frames = io_read(AM_TIMER_UPTIME).us / (1000000 / FPS);
 
-    while (current < frames) {
-      progress(current);
-      current++;
+    for (; current < frames; current++) {
+      game_logic_update(current);
     }
 
     while (1) {
