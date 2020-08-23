@@ -58,7 +58,6 @@ void mp_entry() {
 }
 
 int main() {
-  ioe_init();
   cte_init(on_interrupt);
 
   for (int i = 0; i < LENGTH(tasks); i++) {
