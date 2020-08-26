@@ -24,7 +24,7 @@ extern "C" {
 #define QUEEN_S {       8,   0 KB,     0, 0x0000005c}
 #define QUEEN_M {      11,   0 KB,     0, 0x00000a78}
 #define QUEEN_L {      12,   0 KB,  4707, 0x00003778}
-#define    BF_S {       4,  32 KB,     0, 0xa6f0079e}
+#define    BF_S {       2,  32 KB,     0, 0xa6f0079e}
 #define    BF_M {      25,  32 KB,     0, 0xa88f8a65}
 #define    BF_L {     180,  32 KB, 23673, 0x9221e2b3}
 #define   FIB_S {       2,   1 KB,     0, 0x7cfeddf0}
