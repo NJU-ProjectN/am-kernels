@@ -6,7 +6,7 @@
 !*.S
 !Makefile
 !README
-!LICENCE
+!LICENSE
 .*
 _*
 *~
