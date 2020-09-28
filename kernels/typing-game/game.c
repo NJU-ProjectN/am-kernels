@@ -148,6 +148,8 @@ int main() {
   panic_on(!io_read(AM_TIMER_CONFIG).present, "requires timer");
   panic_on(!io_read(AM_INPUT_CONFIG).present, "requires keyboard");
 
+  printf("Type 'ESC' to exit\n");
+
   int current = 0, rendered = 0;
   while (1) {
     int frames = io_read(AM_TIMER_UPTIME).us / (1000000 / FPS);
