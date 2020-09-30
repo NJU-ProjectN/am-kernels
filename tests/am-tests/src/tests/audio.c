@@ -6,7 +6,7 @@ void audio_test() {
     return;
   }
 
-  io_write(AM_AUDIO_CTRL, 8000, 1, 1024, 8192);
+  io_write(AM_AUDIO_CTRL, 8000, 1, 1024);
 
   extern uint8_t audio_payload, audio_payload_end;
   uint32_t audio_len = &audio_payload_end - &audio_payload;
