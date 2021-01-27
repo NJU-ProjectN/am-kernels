@@ -25,6 +25,13 @@ static int PUZZLE_L[N*N] = {
   1, 15, 13, 14,
 };
 
+static int PUZZLE_H[N*N] = {
+  2, 6, 8, 0,
+  9, 15, 4, 12,
+  5, 13, 11,14,
+  1, 7, 3, 10,
+};
+
 static int ans;
 
 extern "C" {
@@ -40,6 +47,7 @@ void bench_15pz_run() {
     case 0: puzzle = N_puzzle<N>(PUZZLE_S); MAXN = 10; break;
     case 1: puzzle = N_puzzle<N>(PUZZLE_M); MAXN = 2048; break;
     case 2: puzzle = N_puzzle<N>(PUZZLE_L); MAXN = 16384; break;
+    case 3: puzzle = N_puzzle<N>(PUZZLE_H); MAXN = 786432; break;
     default: assert(0);
   }
   assert(puzzle.solvable());

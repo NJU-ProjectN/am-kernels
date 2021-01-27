@@ -9,20 +9,19 @@ CPU正确性和性能测试用基准程序。对AbstractMachine的要求：
 
 ## 使用方法
 
-同一组程序分成三组：test，train和ref。
-test数据规模很小，作为测试用，不计时不评分。
-train数据规模中等，可用于在仿真环境研究微结构行为，计时不评分。
-ref数据规模较大，作为衡量CPU性能用，计时并评分。
+同一组程序分成四组：test，train，ref和huge。
 
-默认运行ref数据规模，使用
+| 名称  | 动态指令数  | 计时 | 计分 | 建议使用场景  |
+| ----- | ----------- | ---- | ---- | ----- |
+| test  | 约300K      |  X   |  X   | 正确性测试  |
+| train | 约60M       |  O   |  X   | 在RTL仿真环境中研究微结构行为 |
+| ref   | 约2B        |  O   |  O   | 在模拟器或FPGA环境中评估处理器性能 |
+| huge  | 约50B       |  O   |  O   | 衡量高性能处理器(如真机)的性能 |
+
+默认运行ref数据规模，可通过`mainargs`选择其它的数据规模, 如:
 ```bash
-make ARCH=native run mainargs=test
+make ARCH=native run mainargs=huge
 ```
-运行test数据规模，使用
-```bash
-make ARCH=native run mainargs=train
-```
-运行train数据规模。
 
 ## 评分根据
 
@@ -32,18 +31,18 @@ make ARCH=native run mainargs=train
 
 ## 已有的基准程序
 
-| 名称    | 描述                                   | ref堆区使用  |
-| ----- | ------------------------------------ | ----- |
-| qsort | 快速排序随机整数数组                           | 640KB |
-| queen | 位运算实现的n皇后问题                          | 0     |
-| bf    | Brainf**k解释器，快速排序输入的字符串              | 32KB  |
-| fib   | Fibonacci数列f(n)=f(n-1)+…+f(n-m)的矩阵求解 | 256KB |
-| sieve | Eratosthenes筛法求素数                    | 2MB   |
-| 15pz  | A*算法求解4x4数码问题                        | 2MB   |
-| dinic | Dinic算法求解二分图最大流                      | 1MB   |
-| lzip  | Lzip数据压缩                             | 4MB   |
-| ssort | Skew算法后缀排序                           | 4MB   |
-| md5   | 计算长随机字符串的MD5校验和                      | 16MB  |
+| 名称    | 描述                                | ref堆区使用  | huge堆区使用 |
+| ----- | -------------------------------------------- | ----- |  ----- |
+| qsort | 快速排序随机整数数组                         | 640KB | 16MB  |
+| queen | 位运算实现的n皇后问题                        | 0     | 0     |
+| bf    | Brainf**k解释器，快速排序输入的字符串        | 32KB  | 32KB  |
+| fib   | Fibonacci数列f(n)=f(n-1)+…+f(n-m)的矩阵求解  | 256KB | 2MB   |
+| sieve | Eratosthenes筛法求素数                       | 2MB   | 10MB  |
+| 15pz  | A*算法求解4x4数码问题                        | 2MB   | 64MB  |
+| dinic | Dinic算法求解二分图最大流                    | 680KB | 2MB   |
+| lzip  | Lzip数据压缩                                 | 4MB   | 64MB  |
+| ssort | Skew算法后缀排序                             | 4MB   | 64MB  |
+| md5   | 计算长随机字符串的MD5校验和                  | 10MB  | 64MB  |
 
 ## 增加一个基准程序`foo`
 

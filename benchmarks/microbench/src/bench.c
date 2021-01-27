@@ -12,13 +12,13 @@ static uint64_t uptime() { return io_read(AM_TIMER_UPTIME).us; }
 
 // The benchmark list
 
-#define ENTRY(_name, _sname, _s, _m, _l, _desc) \
+#define ENTRY(_name, _sname, _s, _m, _l, _h, _desc) \
   { .prepare = bench_##_name##_prepare, \
     .run = bench_##_name##_run, \
     .validate = bench_##_name##_validate, \
     .name = _sname, \
     .desc = _desc, \
-    .settings = {_s, _m, _l}, },
+    .settings = {_s, _m, _l, _h}, },
 
 Benchmark benchmarks[] = {
   BENCHMARK_LIST(ENTRY)
@@ -70,9 +70,10 @@ int main(const char *args) {
   if      (strcmp(setting_name, "test" ) == 0) setting_id = 0;
   else if (strcmp(setting_name, "train") == 0) setting_id = 1;
   else if (strcmp(setting_name, "ref"  ) == 0) setting_id = 2;
+  else if (strcmp(setting_name, "huge" ) == 0) setting_id = 3;
   else {
     printf("Invalid mainargs: \"%s\"; "
-           "must be in {test, train, ref}\n", setting_name);
+           "must be in {test, train, ref, huge}\n", setting_name);
     halt(1);
   }
 
@@ -127,7 +128,7 @@ int main(const char *args) {
 
   printf("==================================================\n");
   printf("MicroBench %s", pass ? "PASS" : "FAIL");
-  if (setting_id == 2) {
+  if (setting_id >= 2) {
     printf("        %d Marks\n", (unsigned int)bench_score);
     printf("                   vs. %d Marks (%s)\n", REF_SCORE, REF_CPU);
   } else {
