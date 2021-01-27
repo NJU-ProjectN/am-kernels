@@ -8,7 +8,7 @@ Setting *setting;
 
 static char *hbrk;
 
-static uint32_t uptime_ms() { return io_read(AM_TIMER_UPTIME).us / 1000; }
+static uint64_t uptime() { return io_read(AM_TIMER_UPTIME).us; }
 
 // The benchmark list
 
@@ -26,7 +26,7 @@ Benchmark benchmarks[] = {
 
 // Running a benchmark
 static void bench_prepare(Result *res) {
-  res->msec = uptime_ms();
+  res->usec = uptime();
 }
 
 static void bench_reset() {
@@ -34,7 +34,7 @@ static void bench_reset() {
 }
 
 static void bench_done(Result *res) {
-  res->msec = uptime_ms() - res->msec;
+  res->usec = uptime() - res->usec;
 }
 
 static const char *bench_check(Benchmark *bench) {
@@ -54,9 +54,9 @@ static void run_once(Benchmark *b, Result *res) {
   res->pass = current->validate();
 }
 
-static unsigned long score(Benchmark *b, unsigned long tsc, unsigned long msec) {
-  if (msec == 0) return 0;
-  return (REF_SCORE / 1000) * setting->ref / msec;
+static unsigned long score(Benchmark *b, unsigned long usec) {
+  if (usec == 0) return 0;
+  return (uint64_t)(REF_SCORE) * setting->ref / usec;
 }
 
 int main(const char *args) {
@@ -82,7 +82,8 @@ int main(const char *args) {
 
   unsigned long bench_score = 0;
   int pass = 1;
-  uint32_t t0 = uptime_ms();
+  uint64_t t0 = uptime();
+  uint64_t score_time = 0;
 
   for (int i = 0; i < LENGTH(benchmarks); i ++) {
     Benchmark *bench = &benchmarks[i];
@@ -93,14 +94,15 @@ int main(const char *args) {
     if (msg != NULL) {
       printf("Ignored %s\n", msg);
     } else {
-      unsigned long msec = ULONG_MAX;
+      unsigned long usec = ULONG_MAX;
       int succ = 1;
       for (int i = 0; i < REPEAT; i ++) {
         Result res;
         run_once(bench, &res);
         printf(res.pass ? "*" : "X");
         succ &= res.pass;
-        if (res.msec < msec) msec = res.msec;
+        if (res.usec < usec) usec = res.usec;
+        score_time += res.usec;
       }
 
       if (succ) printf(" Passed.");
@@ -108,17 +110,18 @@ int main(const char *args) {
 
       pass &= succ;
 
-      unsigned long cur = score(bench, 0, msec);
+      unsigned long cur = succ ? score(bench, usec) : 0;
 
       printf("\n");
       if (setting_id != 0) {
-        printf("  min time: %d ms [%d]\n", (unsigned int)msec, (unsigned int)cur);
+        printf("  min time: %d.%03d ms [%d]\n",
+            (int)(usec / 1000), (int)usec % 1000, (unsigned int)cur);
       }
 
       bench_score += cur;
     }
   }
-  uint32_t t1 = uptime_ms();
+  uint64_t total_time = uptime() - t0;
 
   bench_score /= LENGTH(benchmarks);
 
@@ -130,7 +133,8 @@ int main(const char *args) {
   } else {
     printf("\n");
   }
-  printf("Total time: %d ms\n", t1 - t0);
+  printf("Scored time: %d.%03d ms\n", (int)((score_time) / 1000), (int)score_time % 1000);
+  printf("Total  time: %d.%03d ms\n", (int)((total_time) / 1000), (int)total_time % 1000);
   return 0;
 }
 

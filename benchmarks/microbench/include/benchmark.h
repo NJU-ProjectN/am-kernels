@@ -89,7 +89,7 @@ extern Setting *setting;
 
 typedef struct Result {
   int pass;
-  unsigned long tsc, msec;
+  uint64_t usec;
 } Result;
 
 void prepare(Result *res);
