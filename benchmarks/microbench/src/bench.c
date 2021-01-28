@@ -54,7 +54,7 @@ static void run_once(Benchmark *b, Result *res) {
   res->pass = current->validate();
 }
 
-static unsigned long score(Benchmark *b, unsigned long usec) {
+static uint32_t score(Benchmark *b, uint64_t usec) {
   if (usec == 0) return 0;
   return (uint64_t)(REF_SCORE) * setting->ref / usec;
 }
@@ -81,7 +81,7 @@ int main(const char *args) {
 
   printf("======= Running MicroBench [input *%s*] =======\n", setting_name);
 
-  unsigned long bench_score = 0;
+  uint32_t bench_score = 0;
   int pass = 1;
   uint64_t t0 = uptime();
   uint64_t score_time = 0;
@@ -95,7 +95,7 @@ int main(const char *args) {
     if (msg != NULL) {
       printf("Ignored %s\n", msg);
     } else {
-      unsigned long usec = ULONG_MAX;
+      uint64_t usec = ULLONG_MAX;
       int succ = 1;
       for (int i = 0; i < REPEAT; i ++) {
         Result res;
@@ -111,7 +111,7 @@ int main(const char *args) {
 
       pass &= succ;
 
-      unsigned long cur = succ ? score(bench, usec) : 0;
+      uint32_t cur = succ ? score(bench, usec) : 0;
 
       printf("\n");
       if (setting_id != 0) {
@@ -129,7 +129,7 @@ int main(const char *args) {
   printf("==================================================\n");
   printf("MicroBench %s", pass ? "PASS" : "FAIL");
   if (setting_id >= 2) {
-    printf("        %d Marks\n", (unsigned int)bench_score);
+    printf("        %d Marks\n", bench_score);
     printf("                   vs. %d Marks (%s)\n", REF_SCORE, REF_CPU);
   } else {
     printf("\n");
