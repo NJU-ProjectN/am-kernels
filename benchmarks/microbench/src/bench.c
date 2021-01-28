@@ -10,6 +10,20 @@ static char *hbrk;
 
 static uint64_t uptime() { return io_read(AM_TIMER_UPTIME).us; }
 
+static char *format_time(uint64_t us) {
+  static char buf[32];
+  uint32_t ms = us / 1000;
+  us -= ms * 1000;
+  assert(us < 1000);
+  int len = sprintf(buf, "%d.000", ms);
+  char *p = &buf[len - 1];
+  while (us > 0) {
+    *(p --) = '0' + us % 10;
+    us /= 10;
+  }
+  return buf;
+}
+
 // The benchmark list
 
 #define ENTRY(_name, _sname, _s, _m, _l, _h, _desc) \
@@ -115,8 +129,7 @@ int main(const char *args) {
 
       printf("\n");
       if (setting_id != 0) {
-        printf("  min time: %d.%03d ms [%d]\n",
-            (int)(usec / 1000), (int)usec % 1000, (unsigned int)cur);
+        printf("  min time: %s ms [%d]\n", format_time(usec), cur);
       }
 
       bench_score += cur;
@@ -134,8 +147,8 @@ int main(const char *args) {
   } else {
     printf("\n");
   }
-  printf("Scored time: %d.%03d ms\n", (int)((score_time) / 1000), (int)score_time % 1000);
-  printf("Total  time: %d.%03d ms\n", (int)((total_time) / 1000), (int)total_time % 1000);
+  printf("Scored time: %s ms\n", format_time(score_time));
+  printf("Total  time: %s ms\n", format_time(total_time));
   return 0;
 }
 
