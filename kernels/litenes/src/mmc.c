@@ -2,6 +2,7 @@
 #include "ppu.h"
 #include <klib.h>
 
+byte mmc_id;
 #define MMC_MAX_PAGE_COUNT 1
 
 static byte mmc_chr_pages[MMC_MAX_PAGE_COUNT][0x2000];
