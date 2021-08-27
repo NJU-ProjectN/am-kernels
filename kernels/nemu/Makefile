@@ -7,6 +7,7 @@ $(error Only support with NEMU)
 endif
 
 TMPDEFCONFIG = tmp_defconfig
+TMPDEFCONFIG_FILE = $(NEMU_HOME)/configs/$(TMPDEFCONFIG)
 
 all:
 	$(MAKE) save_config
@@ -16,14 +17,15 @@ all:
 
 save_config:
 	$(MAKE) -C $(NEMU_HOME) savedefconfig
-	mv $(NEMU_HOME)/configs/defconfig $(NEMU_HOME)/configs/$(TMPDEFCONFIG)
+	mv $(NEMU_HOME)/configs/defconfig $(TMPDEFCONFIG_FILE)
 
 build_am:
 	$(MAKE) -C $(NEMU_HOME) $(ISA)-am_defconfig
-	$(MAKE) -C $(NEMU_HOME) ARCH=$(ARCH) mainargs=$(mainargs)
+	$(MAKE) -C $(NEMU_HOME) ARCH=$(ARCH) mainargs=$(mainargs) || \
+		($(MAKE) restore_config; false)
 
 restore_config:
 	$(MAKE) -C $(NEMU_HOME) ARCH=$(ARCH) $(TMPDEFCONFIG)
-	rm $(NEMU_HOME)/configs/$(TMPDEFCONFIG)
+	rm $(TMPDEFCONFIG_FILE)
 
 .PHONY: all save_config build_am restore_config
