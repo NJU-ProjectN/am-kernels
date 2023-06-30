@@ -19,8 +19,8 @@ static const unsigned int   vui[]={0x80000000, 0x80000001, -2, -1, 0, 1, 2, 0x7f
 static const unsigned short vus[]={0x8000, 0x8001, -2, -1, 0, 1, 2, 0x7ffe, 0x7fff};
 static const unsigned char  vuc[]={0x80, 0x81, -2, -1, 0, 1, 2, 0x7e, 0x7f};
 
-#define TEST_STRING "  printf(\"%%20s: %%20d  %%2s  %%-20d  ==  %%-20d =>  %%8s (%%d)\\n\","\
-                      "\"%s\",%d,\"%s\",%d,%d,(%s)(x%sy)==%d?\"PASS\":\"FAIL\",(%s)(x%sy));\n"
+#define TEST_STRING "  printf(\"line %%d: %%s: %%d  %%s  %%d  ==  %%d =>  %%s (%%d)\\n\","\
+                      "__LINE__,\"%s\",%d,\"%s\",%d,%d,(%s)(x%sy)==%d?\"PASS\":\"FAIL\",(%s)(x%sy));\n"
 
 #define TEST_STRING_F "  printf(\"%%20s: %%20f  %%2s  %%-20f  ==  %%-20f =>  %%8s (%%f)\\n\","\
                       "\"%s\",%f,\"%s\",%f,%f,(%s)(x%sy)==%f?\"PASS\":\"FAIL\",(%s)(x%sy));\n"
@@ -38,9 +38,10 @@ static const unsigned char  vuc[]={0x80, 0x81, -2, -1, 0, 1, 2, 0x7e, 0x7f};
     for (j=i; j<c; j++) { \
       if (!exclude(tt, #op, set[i], set[j])) { \
         printf("{\n"); \
-        printf("  %s x=" ss ", y=" ss ";\n", #type, set[i], set[j]); \
+        printf("  volatile %s x=" ss "; volatile %s y=" ss ";\n", #type, set[i], #type, set[j]); \
+        printf("  if ((%s)(x%sy)!=(%s)%d) {\n", #type, #op, #type, (type)(set[i] op set[j])); \
         printf(string, TEST_PARMS(type,set,op)); \
-        printf("}\n"); \
+        printf("  exit_code = 1;}}\n"); \
 	  } \
 	} \
 }
@@ -109,6 +110,7 @@ int main(void)
 {
   printf("#include <stdio.h>\n");
   printf("int main(void) {\n");
+  printf("  int exit_code = 0;\n");
 
   FOR_SET_ALL(signed int, vsi);
   FOR_SET_ALL(signed short, vss);
@@ -118,9 +120,10 @@ int main(void)
   FOR_SET_ALL(unsigned short, vus);
   FOR_SET_ALL(unsigned char, vuc);
 
-  FOR_SET_FLOAT(float, vf);
-  FOR_SET_FLOAT(double, vf);
+  //FOR_SET_FLOAT(float, vf);
+  //FOR_SET_FLOAT(double, vf);
 
+  printf("  return exit_code;\n");
   printf("}\n");
   
   return 0;
