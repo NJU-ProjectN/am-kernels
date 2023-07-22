@@ -9,6 +9,7 @@ void game_of_life();
 void aclock();
 void cmatrix();
 void donut();
+void bf();
 
 int main(const char *args) {
   ioe_init();
@@ -21,6 +22,7 @@ int main(const char *args) {
     case '5': aclock(); break;
     case '6': cmatrix(); break;
     case '7': donut(); break;
+    case '8': bf(); break;
     default:
       printf("Usage: make run mainargs=*\n");
       printf("  1: ant\n");
@@ -30,6 +32,7 @@ int main(const char *args) {
       printf("  5: aclock\n");
       printf("  6: cmatrix\n");
       printf("  7: donut\n");
+      printf("  8: bf\n");
   }
 
   printf("Press Q to Exit\n");

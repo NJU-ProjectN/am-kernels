@@ -6,18 +6,35 @@
  */
 #include <am.h>
 #include <klib.h>
+#include <io.h>
 
-const char *prog =
+static const char *prog =
 #include "mandelbrot.h"
 ;
 
 struct bfi { char cmd; struct bfi *next, *jmp; };
 struct mem { char val; struct mem *next, *prev; };
 
-int main() {
+static inline void putch2(char c) {
+  static int x = 0, y = 0;
+  if (c == '\n') {
+    y ++;
+    x = 0;
+  } else {
+    if (x % 2 == 0) {
+      print_char(c, y, x / 2);
+      screen_refresh();
+    }
+    x ++;
+  }
+}
+
+void bf() {
   int ch;
   struct bfi *p=0, *n=0, *j=0, *pgm = 0;
   struct mem *m = malloc(sizeof(*m));
+  memset(m, 0, sizeof(*m));
+  screen_clear();
 
   /*
    *  For each character, if it's a valid BF command add it onto the
@@ -35,8 +52,9 @@ int main() {
         ch == ',' || ch == '.' || ch == '[' || (ch == ']' && j)) {
       if ((n = malloc(sizeof(*n))) == NULL) {
         printf("malloc failed! exiting...\n");
-        return 1;
+        halt(1);
       }
+      memset(n, 0, sizeof(*n));
       if (p) p->next = n; else pgm = n;
       n->cmd = ch; p = n;
       if (n->cmd == '[') { n->jmp=j; j = n; }
@@ -54,28 +72,27 @@ int main() {
     switch(n->cmd) {
       case '+': m->val++; break;
       case '-': m->val--; break;
-      case '.': putch(m->val); break;
+      case '.': putch2(m->val); break;
       case ',': if((ch=*(s ++))!='\0') m->val=ch; break;
       case '[': if (m->val == 0) n=n->jmp; break;
       case ']': if (m->val != 0) n=n->jmp; break;
       case '<':
         if (!(m=m->prev)) {
           printf("Hit start of tape\n");
-          return 1;
+          halt(1);
         }
         break;
       case '>':
         if (m->next == 0) {
           if ((m->next = malloc(sizeof(*m))) == NULL) {
             printf("malloc failed! exiting...\n");
-            return 1;
+            halt(1);
           }
+          memset(m->next, 0, sizeof(*m));
           m->next->prev = m;
         }
         m=m->next;
         break;
     }
   }
-
-  return 0;
 }
