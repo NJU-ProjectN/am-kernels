@@ -38,19 +38,20 @@ void game_of_life(void) {
   w = screen_tile_width();
   h = screen_tile_height();
 
-  int x,y;
-  univ = malloc(h * sizeof(unsigned int *));
-  new = malloc(h * sizeof(unsigned int *));
+  univ = malloc(h * sizeof(unsigned*));
+  new = malloc(h * sizeof(unsigned*));
   for (int i = 0; i < h; i++) {
-    univ[i] = malloc(w * sizeof(unsigned int));
-    new[i] = malloc(w * sizeof(unsigned int));
+    univ[i] = malloc(w * sizeof(unsigned));
+    new[i] = malloc(w * sizeof(unsigned));
   }
+  
+  int x,y;
   for (x=0;x<w;x++)
     for (y=0;y<h;y++) 
       univ[y][x] = rand() % 2;
   while (1) {
-    show(univ);
-    evolve(univ);
+    show();
+    evolve();
     usleep(200000);
   }
 }
