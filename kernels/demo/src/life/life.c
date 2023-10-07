@@ -40,7 +40,7 @@ void game_of_life(void) {
   h = screen_tile_height();
 
   int x,y;
-  unsigned univ[h][w];
+  unsigned (*univ)[w] = malloc(h * w * sizeof(unsigned*));
   for (x=0;x<w;x++)
     for (y=0;y<h;y++) 
       univ[y][x] = rand() % 2;
