@@ -5,6 +5,8 @@
 #include <io.h>
 
 static int w = 40, h = 25;
+static unsigned *new_array = NULL;
+static unsigned *univ_array = NULL;
 
 void show(void *u) {
   int x,y;
@@ -20,7 +22,7 @@ void show(void *u) {
 void evolve(void *u) {
   int x,y,x1,y1;
   unsigned (*univ)[w] = u;
-  unsigned new[h][w];
+  unsigned (*new)[w] = (void *)new_array;
 
   for (y=0;y<h;y++) for (x=0;x<w;x++) {
     int n = 0;
@@ -38,9 +40,11 @@ void evolve(void *u) {
 void game_of_life(void) {
   w = screen_tile_width();
   h = screen_tile_height();
+  univ_array = malloc(h * w * sizeof(unsigned));
+  new_array  = malloc(h * w * sizeof(unsigned));
+  unsigned (*univ)[w] = (void *)univ_array;
 
   int x,y;
-  unsigned univ[h][w];
   for (x=0;x<w;x++)
     for (y=0;y<h;y++) 
       univ[y][x] = rand() % 2;
