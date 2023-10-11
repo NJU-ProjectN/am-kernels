@@ -31,7 +31,7 @@ static void text(int y, int i, int d, const char *s) {
 static void add_disk(int i, int d) {
   t[i]->x[t[i]->n++] = d;
   text(t[i]->n, i, d, "==");
-
+  screen_refresh();
   usleep(100000);
 }
 
