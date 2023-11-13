@@ -7,9 +7,10 @@
 /* gcc gen_test.c && ./a.out > test.c && movcc test.c movfusator/lib/softfloat64.o && ./a.out | grep FAIL */
 
 #include <stdio.h>
+#include <string.h>
 
-static const double vd[]={-2.0, -1.0, 0.0, 1.0, 2.0};
-static const float  vf[]={-2.0f, -1.0f, 0.0f, 1.0f, 2.0f};
+//static const double vd[]={-2.0, -1.0, 0.0, 1.0, 2.0};
+//static const float  vf[]={-2.0f, -1.0f, 0.0f, 1.0f, 2.0f};
 
 static const signed int     vsi[]={0x80000000, 0x80000001, -2, -1, 0, 1, 2, 0x7ffffffe, 0x7fffffff};
 static const signed short   vss[]={0x8000, 0x8001, -2, -1, 0, 1, 2, 0x7ffe, 0x7fff};
@@ -82,22 +83,26 @@ static const unsigned char  vuc[]={0x80, 0x81, -2, -1, 0, 1, 2, 0x7e, 0x7f};
 
 typedef enum { I, F } type;
 
+static int strsame(const char *s1, const char *s2) {
+  return strcmp(s1, s2) == 0;
+}
+
 int exclude(type t, char* op, int x, int y)
 {
 	if (t==I) {
-		if (op=="/" || op=="%") {
+		if (strsame(op, "/") || strsame(op, "%")) {
 			if (y==0 || (y==-1 && x==0x80000000)) {
 				return 1;
 			}
 		}
-		else if (op==">>" || op=="<<") {
+		else if (strsame(op, ">>") || strsame(op, "<<")) {
 			if (y>31 || y<0) {
 				return 1;
 			}
 		}
 	}
 	else if (t==F) {
-		if (op=="/") {
+		if (strsame(op, "/")) {
 			if (y==0) {
 				return 1;
 			}
