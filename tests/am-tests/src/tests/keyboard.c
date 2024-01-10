@@ -11,7 +11,7 @@ static void drain_keys() {
   if (has_uart) {
     while (1) {
       char ch = io_read(AM_UART_RX).data;
-      if (ch == -1) break;
+      if (ch == (char)-1) break;
       printf("Got (uart): %c (%d)\n", ch, ch & 0xff);
     }
   }
