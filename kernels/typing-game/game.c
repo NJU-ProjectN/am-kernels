@@ -151,8 +151,9 @@ int main() {
   printf("Type 'ESC' to exit\n");
 
   int current = 0, rendered = 0;
+  uint64_t t0 = io_read(AM_TIMER_UPTIME).us;
   while (1) {
-    int frames = io_read(AM_TIMER_UPTIME).us / (1000000 / FPS);
+    int frames = (io_read(AM_TIMER_UPTIME).us - t0) / (1000000 / FPS);
 
     for (; current < frames; current++) {
       game_logic_update(current);
