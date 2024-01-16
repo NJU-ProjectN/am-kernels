@@ -114,10 +114,12 @@ void video_init() {
   for (int i = 0; i < CHAR_W * CHAR_H; i++)
     blank[i] = COL_PURPLE;
 
-  for (int x = 0; x < screen_w; x += CHAR_W)
-    for (int y = 0; y < screen_h; y += CHAR_H) {
-      io_write(AM_GPU_FBDRAW, x, y, blank, min(CHAR_W, screen_w - x), min(CHAR_H, screen_h - y), false);
-    }
+  uint32_t blank_line[screen_w];
+  for (int i = 0; i < screen_w; i++)
+    blank_line[i] = COL_PURPLE;
+
+  for (int y = 0; y < screen_h; y ++)
+    io_write(AM_GPU_FBDRAW, 0, y, blank_line, screen_w, 1, false);
 
   for (int ch = 0; ch < 26; ch++) {
     char *c = &font[CHAR_H * ch];
