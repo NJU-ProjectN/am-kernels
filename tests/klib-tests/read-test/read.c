@@ -8,7 +8,7 @@ int main() {
   char str2[15];
   int ret;
 
-  // 填充两个字符串
+
   memcpy(str1, "abcdef", 6);
   memcpy(str2, "ABCDEF", 6);
 
