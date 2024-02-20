@@ -149,7 +149,7 @@ int main(const char *args) {
   }
   printf("Scored time: %s ms\n", format_time(score_time));
   printf("Total  time: %s ms\n", format_time(total_time));
-  return 0;
+  return (pass ? 0 : 1);
 }
 
 // Libraries
