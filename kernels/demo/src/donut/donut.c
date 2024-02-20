@@ -31,8 +31,6 @@ void donut(void) {
   int sA = 1024, cA = 0, sB = 1024, cB = 0, _;
 
   while(1) {
-    screen_clear();
-
     memset(b, 32, 1760);  // text buffer
     memset(z, 127, 1760);   // z buffer
     int sj = 0, cj = 1024;
@@ -63,6 +61,10 @@ void donut(void) {
       }
       R(9, 7, cj, sj)  // rotate j
     }
+    R(5, 7, cA, sA);
+    R(5, 8, cB, sB);
+
+    screen_clear();
     int y = 0, x = 0;
     for (int k = 0; 1761 > k; k++) {
       if (k % 80) {
@@ -73,8 +75,6 @@ void donut(void) {
         x = 1;
       }
     }
-    R(5, 7, cA, sA);
-    R(5, 8, cB, sB);
     
     screen_refresh();
     usleep(100000);
