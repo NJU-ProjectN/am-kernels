@@ -1,13 +1,18 @@
-#pragma once
-#include"Block.h"
-#include<vector>//向量库
-class Blockchain
-{
+#ifndef BLOCKCHAIN_H
+#define BLOCKCHAIN_H
+
+#include "Block.h"
+
+#define MAX_DIFFICULTY 9 //难度值设置3基本上秒出结果，4可以看出差距，5大约要等2分钟左右。
+#define MAXBLOCK 10
+
+class Blockchain {
 public:
-	Blockchain();//默认构造函数
-	void AddBlock(Block bNew);//增加区块函数
+	Blockchain(int difficulty);//默认构造函数
+	void AddBlock(uint32_t nIndexIn, const char* sDataIn);//增加区块函数
 private:
-	uint32_t _nDifficulty;//难度值
-	vector<Block> _vChain;//保存区块的变量
-	Block _GetLastBlock() const;//获取最新的区块，由const关键字，表示输出的内容不可更改
+  char _diffStr[MAX_DIFFICULTY + 3];
+	Block _vChain[MAXBLOCK];//保存区块的变量
+  int _nrBlock;
 };
+#endif

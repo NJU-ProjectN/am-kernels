@@ -1,16 +1,18 @@
-#include"Blockchain.h"
-Blockchain::Blockchain()
-{
-	_vChain.emplace_back(Block(0, "Genesis Block"));
-	_nDifficulty = 5;//难度值设置3基本上秒出结果，4可以看出差距，5大约要等2分钟左右。
+#include <klib.h>
+#include "Blockchain.h"
+
+Blockchain::Blockchain(int difficulty) {
+	_vChain[0].block_init(0, "Genesis Block", "");
+  _nrBlock = 1;
+  assert(difficulty <= MAX_DIFFICULTY);
+  memset(_diffStr, '0', difficulty); //填充数组，使数组的前difficulty位都为0，作为难度。
+	_diffStr[difficulty] = '\0';
 }
-void Blockchain::AddBlock(Block bNew)
-{
-	bNew.sPrevHash = _GetLastBlock().GetHash();
-	bNew.MineBlock(_nDifficulty);
-	_vChain.push_back(bNew);
-}
-Block Blockchain::_GetLastBlock() const
-{
-	return _vChain.back();
+
+void Blockchain::AddBlock(uint32_t nIndexIn, const char *sDataIn) {
+  assert(_nrBlock < MAXBLOCK);
+  Block *b = &_vChain[_nrBlock];
+  b->block_init(nIndexIn, sDataIn, _vChain[_nrBlock - 1].GetHash());
+	b->MineBlock(_diffStr);
+  _nrBlock ++;
 }

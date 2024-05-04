@@ -1,11 +1,7 @@
-#pragma once
-
 #ifndef SHA256_H
 #define SHA256_H
-#include <string>
 
-class SHA256
-{
+class SHA256 {
 protected:
 	typedef unsigned char uint8;
 	typedef unsigned int uint32;
@@ -27,7 +23,7 @@ protected:
 	uint32 m_h[8];
 };
 
-std::string sha256(std::string input);
+void sha256(char *output, const char *input);
 
 #define SHA2_SHFR(x, n)    (x >> n)
 #define SHA2_ROTR(x, n)   ((x >> n) | (x << ((sizeof(x) << 3) - n)))
@@ -38,15 +34,13 @@ std::string sha256(std::string input);
 #define SHA256_F2(x) (SHA2_ROTR(x,  6) ^ SHA2_ROTR(x, 11) ^ SHA2_ROTR(x, 25))
 #define SHA256_F3(x) (SHA2_ROTR(x,  7) ^ SHA2_ROTR(x, 18) ^ SHA2_SHFR(x,  3))
 #define SHA256_F4(x) (SHA2_ROTR(x, 17) ^ SHA2_ROTR(x, 19) ^ SHA2_SHFR(x, 10))
-#define SHA2_UNPACK32(x, str)                 \
-{                                             \
+#define SHA2_UNPACK32(x, str) {               \
     *((str) + 3) = (uint8) ((x)      );       \
     *((str) + 2) = (uint8) ((x) >>  8);       \
     *((str) + 1) = (uint8) ((x) >> 16);       \
     *((str) + 0) = (uint8) ((x) >> 24);       \
 }
-#define SHA2_PACK32(str, x)                   \
-{                                             \
+#define SHA2_PACK32(str, x) {                 \
     *(x) =   ((uint32) *((str) + 3)      )    \
            | ((uint32) *((str) + 2) <<  8)    \
            | ((uint32) *((str) + 1) << 16)    \
