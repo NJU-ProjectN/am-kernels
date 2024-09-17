@@ -33,6 +33,7 @@ void bf() {
   int ch;
   struct bfi *p=0, *n=0, *j=0, *pgm = 0;
   struct mem *m = malloc(sizeof(*m));
+  struct mem *mhead = m;
   memset(m, 0, sizeof(*m));
   screen_clear();
 
@@ -94,5 +95,16 @@ void bf() {
         m=m->next;
         break;
     }
+  }
+
+  while (mhead != NULL) {
+    m = mhead;
+    mhead = mhead->next;
+    free(m);
+  }
+  while (pgm != NULL) {
+    n = pgm;
+    pgm = pgm->next;
+    free(n);
   }
 }

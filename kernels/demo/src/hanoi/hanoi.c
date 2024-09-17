@@ -7,16 +7,13 @@
 
 #define H 7
 
-typedef struct { int *x, n; } tower;
-static tower *new_tower(int cap) {
-  int size = sizeof(tower) + sizeof(int) * cap;
-  tower *t = malloc(size);
-  memset(t, 0, size);
-  t->x = (int*)(t + 1);
-  return t;
-}
+typedef struct { int *x, n, cap[H]; } tower;
+static tower t[3];
 
-static tower *t[3];
+static void init_tower(tower *t) {
+  memset(t, 0, sizeof(*t));
+  t->x = &t->cap[0];
+}
 
 static void text(int y, int i, int d, const char *s) {
   int yy = H - y + 1;
@@ -29,15 +26,15 @@ static void text(int y, int i, int d, const char *s) {
 }
 
 static void add_disk(int i, int d) {
-  t[i]->x[t[i]->n++] = d;
-  text(t[i]->n, i, d, "==");
+  t[i].x[t[i].n++] = d;
+  text(t[i].n, i, d, "==");
   screen_refresh();
   usleep(100000);
 }
 
 int remove_disk(int i) {
-  int d = t[i]->x[--t[i]->n];
-  text(t[i]->n + 1, i, d, "  ");
+  int d = t[i].x[--t[i].n];
+  text(t[i].n + 1, i, d, "  ");
   return d;
 }
 
@@ -53,7 +50,7 @@ void hanoi() {
   screen_clear();
 
   int c;
-  for (c = 0; c < 3; c++)	 t[c] = new_tower(H);
+  for (c = 0; c < 3; c++)	 init_tower(&t[c]);
   for (c = H; c; c--) add_disk(0, c);
 
   move(H, 0, 2, 1);

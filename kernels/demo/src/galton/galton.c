@@ -93,4 +93,6 @@ void galton() {
   if (h < H_MIN) h = H_MIN;
   init();
   do { show_board(), usleep(6000); } while (run());
+  free(x);
+  free(b);
 }
