@@ -941,7 +941,7 @@ int main ()
   printf ("Finished in %d ms\n", (int)User_Time);
   printf("==================================================\n");
   printf("Dhrystone %s         %d Marks\n", pass ? "PASS" : "FAIL",
-      880900 / (int)User_Time * NUMBER_OF_RUNS/ 500000);
+         (int)(880900 / User_Time * NUMBER_OF_RUNS / 500000));
   printf("                   vs. 100000 Marks (i7-7700K @ 4.20GHz)\n");
 
   return (pass ? 0 : 1);
