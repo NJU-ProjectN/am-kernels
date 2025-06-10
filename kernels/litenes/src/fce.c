@@ -116,7 +116,7 @@ void fce_run() {
     if (upt - last > 1000) {
       last = upt;
       for (int i = 0; i < 80; i++) putch('\b');
-      printf("(System time: %ds) FPS = %d", upt / 1000, nr_draw);
+      printf("(System time: %ds) FPS = %3d", upt / 1000, nr_draw);
       nr_draw = 0;
     }
   }
