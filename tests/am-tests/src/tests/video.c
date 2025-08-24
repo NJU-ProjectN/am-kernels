@@ -10,11 +10,18 @@ static inline uint8_t R(uint32_t p) { return p >> 16; }
 static inline uint8_t G(uint32_t p) { return p >> 8; }
 static inline uint8_t B(uint32_t p) { return p; }
 
-static uint32_t canvas[N][N];
+static uint32_t canvas[N][N]; //这个地方就是画布
 static int used[N][N];
 
 static uint32_t color_buf[32 * 32];
 
+/****************
+ * redraw做了什么
+ *首先获得屏幕的宽高（通过io_read读GPU配置），然后算出每个方块的大小
+ *对canvas里的每个像素，把它的颜色值填到color_buf（这是要画的方块的颜色）
+ *用io_write把这个方块画在屏幕上对应位置（xw, yh），大小是w*h
+ *最后再调用一次io_write，表示同步（刷新屏幕）
+ ***************/
 void redraw() {
   int w = io_read(AM_GPU_CONFIG).width / N;
   int h = io_read(AM_GPU_CONFIG).height / N;
