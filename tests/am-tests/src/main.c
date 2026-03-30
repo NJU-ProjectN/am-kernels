@@ -13,6 +13,9 @@ static const char *tests[256] = {
   ['v'] = "display test",
   ['a'] = "audio test",
   ['p'] = "x86 virtual memory test",
+  ['1'] = "string_1 test",
+  ['2'] = "string_2 test",
+  ['3'] = "string_3 test",
 };
 
 int main(const char *args) {
@@ -26,6 +29,9 @@ int main(const char *args) {
     CASE('v', video_test, IOE);
     CASE('a', audio_test, IOE);
     CASE('p', vm_test, CTE(vm_handler), VME(simple_pgalloc, simple_pgfree));
+    CASE('1', test_string_1);
+    CASE('2', test_string_2);
+    CASE('3', test_string_3);
     case 'H':
     default:
       printf("Usage: make run mainargs=*\n");

@@ -1,6 +1,6 @@
 #ifndef __DRAW_H__
 
-#define HAS_GUI
+// #define HAS_GUI  //这里定义了图形用户界面
 
 #include <stdio.h>
 #include <am.h>

@@ -2,8 +2,8 @@
 #include <klib.h>
 #include <klib-macros.h>
 
-#define FPS            30
-#define CPS             5
+#define FPS            30      //帧率 每秒30帧
+#define CPS             5      //每秒5个新字母
 #define CHAR_W          8
 #define CHAR_H         16
 #define NCHAR         128
@@ -33,9 +33,9 @@ void new_char() {
   for (int i = 0; i < LENGTH(chars); i++) {
     struct character *c = &chars[i];
     if (!c->ch) {
-      c->ch = 'A' + randint(0, 25);
-      c->x = randint(0, screen_w - CHAR_W);
-      c->y = 0;
+      c->ch = 'A' + randint(0, 25);         //随机字符
+      c->x = randint(0, screen_w - CHAR_W); //随机出现在屏幕的某一列
+      c->y = 0;                             //从顶部开始下落
       c->v = (screen_h - CHAR_H + 1) / randint(FPS * 3 / 2, FPS * 2);
       c->t = 0;
       return;
@@ -76,6 +76,7 @@ void render() {
   }
 
   n = 0;
+  //记录本帧数据及坐标
   for (int i = 0; i < LENGTH(chars); i++) {
     struct character *c = &chars[i];
     if (c->ch) {
@@ -110,7 +111,7 @@ void video_init() {
   screen_w = io_read(AM_GPU_CONFIG).width;
   screen_h = io_read(AM_GPU_CONFIG).height;
 
-  extern char font[];
+  extern char font[]; //用于渲染字母的像素形状
   for (int i = 0; i < CHAR_W * CHAR_H; i++)
     blank[i] = COL_PURPLE;
 
