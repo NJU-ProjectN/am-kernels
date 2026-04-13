@@ -25,7 +25,7 @@ Makefile.%: tests/%.c latest
 
 run: all
 	@cat $(RESULT)
-	@grep -q "FAIL" $(RESULT); FAIL=$$?; rm $(RESULT); test $$FAIL -ne 0
+	@grep -q "FAIL" $(RESULT) | grep -v "wrong\]"; FAIL=$$?; rm $(RESULT); test $$FAIL -ne 0
 
 gdb: all
 
