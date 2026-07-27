@@ -56,10 +56,10 @@ void update() {
   for (int step = 1; step < N * N; step ++) {
     for (int t = 0; t < 4; t ++) {
       int x1 = x + dx[d], y1 = y + dy[d];
-      if (x1 >= 0 && x1 < N && y1 >= 0 && y1 < N && !used[x1][y1]) {
+      if (x1 >= 0 && x1 < N && y1 >= 0 && y1 < N && !used[y1][x1]) {
         x = x1; y = y1;
-        used[x][y] = 1;
-        canvas[x][y] = p(init + step / 2);
+        used[y][x] = 1;
+        canvas[y][x] = p(init + step / 2);
         break;
       }
       d = (d + 1) % 4;
